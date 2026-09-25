@@ -1,588 +1,849 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <title>ARIA SME HUB</title>
 
-<title>ARIA SME HUB</title>
-
-<meta
-    name="description"
-    content="ARIA SME HUB — Turn what you have into opportunity."
->
-
-<link rel="stylesheet" href="style.css">
-
-</head><body><!-- =========================================
-     HEADER
-========================================= --><header class="header"><div class="brand">
-
-    <div class="brand-icon">
-        A
-    </div>
-
-    <div>
-
-        <h1>ARIA</h1>
-
-        <span>SME HUB</span>
-
-    </div>
-
-</div>
-
-
-<button
-    class="menu-button"
-    id="menuButton"
-    type="button"
-    aria-label="Open ARIA menu"
->
-    ☰
-</button>
-
-</header><!-- =========================================
-     MAIN APP
-========================================= --><main class="app"><!-- HERO -->
-
-<section class="hero">
-
-    <div class="status">
-
-        <span class="status-dot"></span>
-
-        ARIA is ready
-
-    </div>
-
-
-    <h2>
-        Turn what you have
-        into opportunity.
-    </h2>
-
-
-    <p>
-        Discover what you can do with your
-        resources, skills, ideas and connections.
-    </p>
-
-</section>
-
-
-
-<!-- =====================================
-     MAIN ACTIONS
-====================================== -->
-
-<section class="main-actions">
-
-
-    <button
-        class="scan-card"
-        id="scanButton"
-        type="button"
+    <meta
+        name="description"
+        content="ARIA SME HUB — Turn what you have into opportunity."
     >
 
-        <div class="action-icon">
-            📷
-        </div>
+    <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
 
-        <div class="action-text">
+<header class="header">
 
-            <strong>
-                SCAN WITH ARIA
-            </strong>
+    <button class="brand" id="homeButton" type="button">
+        <span class="brand-icon">A</span>
 
-            <span>
-                Show ARIA what you have
-            </span>
-
-        </div>
-
-
-        <div class="arrow">
-            →
-        </div>
-
+        <span class="brand-text">
+            <strong>ARIA</strong>
+            <small>SME HUB</small>
+        </span>
     </button>
-
-
 
     <button
-        class="talk-card"
-        id="talkButton"
+        class="menu-button"
+        id="menuButton"
         type="button"
+        aria-label="Open menu"
     >
-
-        <div class="action-icon">
-            🎤
-        </div>
-
-
-        <div class="action-text">
-
-            <strong>
-                TALK TO ARIA
-            </strong>
-
-            <span>
-                Tell ARIA what you need
-            </span>
-
-        </div>
-
-
-        <div class="arrow">
-            →
-        </div>
-
+        ☰
     </button>
 
-
-</section>
-
+</header>
 
 
-<!-- =====================================
-     DISCOVER
-====================================== -->
+<main class="app">
 
-<section class="section">
+    <!-- HOME -->
+
+    <section id="homeScreen" class="screen active">
+
+        <section class="hero">
+
+            <div class="status">
+                <span class="status-dot"></span>
+                ARIA is ready
+            </div>
+
+            <h1>
+                Turn what you have
+                into opportunity.
+            </h1>
+
+            <p>
+                Discover what you can do with your
+                resources, skills, ideas and connections.
+            </p>
+
+        </section>
 
 
-    <div class="section-heading">
+        <!-- MAIN ACTIONS -->
 
-        <div>
+        <section class="main-actions">
+
+            <button
+                class="action-card scan-card"
+                id="scanButton"
+                type="button"
+            >
+
+                <span class="action-icon">📷</span>
+
+                <span class="action-text">
+                    <strong>SCAN WITH ARIA</strong>
+                    <small>Show ARIA what you have</small>
+                </span>
+
+                <span class="arrow">→</span>
+
+            </button>
+
+
+            <button
+                class="action-card talk-card"
+                id="talkButton"
+                type="button"
+            >
+
+                <span class="action-icon">💬</span>
+
+                <span class="action-text">
+                    <strong>TALK TO ARIA</strong>
+                    <small>Ask ARIA anything about business</small>
+                </span>
+
+                <span class="arrow">→</span>
+
+            </button>
+
+        </section>
+
+
+        <!-- DISCOVER -->
+
+        <section class="section">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">DISCOVER</span>
+                    <h2>Find your next opportunity.</h2>
+                </div>
+            </div>
+
+
+            <div class="feature-grid">
+
+                <button
+                    class="feature-card"
+                    data-feature="opportunities"
+                    type="button"
+                >
+                    <span class="feature-icon">💡</span>
+                    <strong>Opportunities</strong>
+                    <small>Find possibilities</small>
+                </button>
+
+
+                <button
+                    class="feature-card"
+                    data-feature="buyers"
+                    type="button"
+                >
+                    <span class="feature-icon">🛒</span>
+                    <strong>Find Buyers</strong>
+                    <small>Find potential markets</small>
+                </button>
+
+
+                <button
+                    class="feature-card"
+                    data-feature="partners"
+                    type="button"
+                >
+                    <span class="feature-icon">🤝</span>
+                    <strong>Find Partners</strong>
+                    <small>Connect with people</small>
+                </button>
+
+
+                <button
+                    class="feature-card"
+                    data-feature="global"
+                    type="button"
+                >
+                    <span class="feature-icon">🌎</span>
+                    <strong>Global Market</strong>
+                    <small>Explore worldwide</small>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- MY BUSINESS -->
+
+        <section class="business-preview">
+
+            <div class="business-header">
+
+                <div>
+                    <span class="eyebrow">MY BUSINESS</span>
+
+                    <h2>
+                        Build from what you have.
+                    </h2>
+                </div>
+
+                <span class="business-icon">🏢</span>
+
+            </div>
+
+
+            <div class="business-items">
+
+                <div>
+                    <strong>Resources</strong>
+                    <small>What you have</small>
+                </div>
+
+                <div>
+                    <strong>Skills</strong>
+                    <small>What you can do</small>
+                </div>
+
+                <div>
+                    <strong>Opportunities</strong>
+                    <small>What you can build</small>
+                </div>
+
+            </div>
+
+
+            <button
+                class="business-button"
+                id="businessButton"
+                type="button"
+            >
+                Open My Business →
+            </button>
+
+        </section>
+
+
+        <!-- RADAR -->
+
+        <section class="radar">
+
+            <span class="radar-icon">🔎</span>
+
+            <div>
+
+                <span class="eyebrow">
+                    ARIA OPPORTUNITY RADAR
+                </span>
+
+                <h2>
+                    Your opportunity radar.
+                </h2>
+
+                <p>
+                    ARIA can help identify business,
+                    employment, market and income
+                    opportunities from what you already have.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUESTIONS -->
+
+        <section class="questions">
+
+            <h2>
+                Start with what you already have.
+            </h2>
+
+            <div class="question-list">
+
+                <div>WHAT DO YOU HAVE?</div>
+                <div>WHAT CAN YOU DO?</div>
+                <div>WHAT IS IT WORTH?</div>
+                <div>WHO NEEDS IT?</div>
+                <div>WHERE CAN YOU SELL IT?</div>
+                <div>WHO CAN HELP YOU?</div>
+
+            </div>
+
+        </section>
+
+    </section>
+
+
+
+    <!-- AI CHAT -->
+
+    <section id="chatScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">ARIA AI</span>
+                <h2>Talk to ARIA</h2>
+            </div>
+
+        </div>
+
+
+        <div id="chatMessages" class="chat-messages">
+
+            <div class="message aria-message">
+
+                <div class="message-avatar">
+                    A
+                </div>
+
+                <div class="message-content">
+
+                    <strong>ARIA</strong>
+
+                    <p>
+                        Hello. I am ARIA.
+                        Tell me what you have, what you
+                        can do, or what you want to achieve.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <form id="chatForm" class="chat-form">
+
+            <textarea
+                id="chatInput"
+                rows="1"
+                placeholder="Ask ARIA..."
+                aria-label="Message ARIA"
+            ></textarea>
+
+            <button
+                id="voiceButton"
+                type="button"
+                aria-label="Voice input"
+            >
+                🎤
+            </button>
+
+            <button
+                id="sendButton"
+                type="submit"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </section>
+
+
+
+    <!-- SCANNER -->
+
+    <section id="scannerScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">ARIA VISION</span>
+                <h2>Scan with ARIA</h2>
+            </div>
+
+        </div>
+
+
+        <div class="scanner-box">
+
+            <div class="scanner-icon">
+                📷
+            </div>
+
+            <h2>
+                Show ARIA what you have.
+            </h2>
+
+            <p>
+                Take a photo or select an image of
+                a product, resource, tool, document
+                or other item.
+            </p>
+
+
+            <button
+                id="cameraButton"
+                class="primary-button"
+                type="button"
+            >
+                📷 Take Photo
+            </button>
+
+
+            <button
+                id="imageButton"
+                class="secondary-button"
+                type="button"
+            >
+                🖼️ Choose Image
+            </button>
+
+            <input
+                id="imageInput"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                hidden
+            >
+
+        </div>
+
+
+        <div id="scanResult" class="scan-result hidden">
+
+            <img
+                id="scanPreview"
+                alt="Selected image"
+            >
+
+            <h3>What do you want ARIA to find?</h3>
+
+            <button
+                class="scan-question"
+                data-question="What is this and what business opportunities could it create?"
+                type="button"
+            >
+                💡 Business opportunities
+            </button>
+
+            <button
+                class="scan-question"
+                data-question="How could I sell this in Papua New Guinea?"
+                type="button"
+            >
+                🛒 How could I sell this?
+            </button>
+
+            <button
+                class="scan-question"
+                data-question="How could I turn this into income?"
+                type="button"
+            >
+                💰 How could I make income from this?
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- OPPORTUNITIES -->
+
+    <section id="opportunitiesScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">DISCOVER</span>
+                <h2>Opportunities</h2>
+            </div>
+
+        </div>
+
+
+        <div class="page-card">
+
+            <span class="large-icon">💡</span>
+
+            <h2>
+                Find opportunities around you.
+            </h2>
+
+            <p>
+                Tell ARIA about your skills, resources,
+                location, experience and interests.
+                ARIA can then help you explore possible
+                business and income opportunities.
+            </p>
+
+            <button
+                class="primary-button"
+                data-open-chat="Tell me about business opportunities I could explore in Papua New Guinea."
+                type="button"
+            >
+                Ask ARIA
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- BUYERS -->
+
+    <section id="buyersScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">MARKETS</span>
+                <h2>Find Buyers</h2>
+            </div>
+
+        </div>
+
+
+        <div class="page-card">
+
+            <span class="large-icon">🛒</span>
+
+            <h2>
+                Find potential customers.
+            </h2>
+
+            <p>
+                ARIA can help you think through
+                customer groups, local markets,
+                PNG markets and potential export markets.
+            </p>
+
+            <button
+                class="primary-button"
+                data-open-chat="Help me identify potential buyers for my product or service."
+                type="button"
+            >
+                Find Buyers with ARIA
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- PARTNERS -->
+
+    <section id="partnersScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">NETWORK</span>
+                <h2>Find Partners</h2>
+            </div>
+
+        </div>
+
+
+        <div class="page-card">
+
+            <span class="large-icon">🤝</span>
+
+            <h2>
+                Connect skills and resources.
+            </h2>
+
+            <p>
+                Find ways to combine your skills,
+                resources and relationships with
+                other people and businesses.
+            </p>
+
+            <button
+                class="primary-button"
+                data-open-chat="Help me identify the types of business partners I may need."
+                type="button"
+            >
+                Ask ARIA
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- GLOBAL MARKET -->
+
+    <section id="globalScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">GLOBAL</span>
+                <h2>Global Market</h2>
+            </div>
+
+        </div>
+
+
+        <div class="page-card">
+
+            <span class="large-icon">🌎</span>
+
+            <h2>
+                Explore wider markets.
+            </h2>
+
+            <p>
+                Explore possible international markets,
+                product categories, customer needs,
+                export ideas and market research.
+            </p>
+
+            <button
+                class="primary-button"
+                data-open-chat="Help me explore international markets for a PNG product."
+                type="button"
+            >
+                Explore with ARIA
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- BUSINESS -->
+
+    <section id="businessScreen" class="screen">
+
+        <div class="page-header">
+
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
+
+            <div>
+                <span class="eyebrow">MY BUSINESS</span>
+                <h2>Business Workspace</h2>
+            </div>
+
+        </div>
+
+
+        <div class="business-dashboard">
+
+            <div class="dashboard-card">
+                <span>📦</span>
+                <strong>Products</strong>
+                <small>Manage what you sell</small>
+            </div>
+
+            <div class="dashboard-card">
+                <span>👥</span>
+                <strong>Customers</strong>
+                <small>Track your customers</small>
+            </div>
+
+            <div class="dashboard-card">
+                <span>💰</span>
+                <strong>Sales</strong>
+                <small>Track business income</small>
+            </div>
+
+            <div class="dashboard-card">
+                <span>📊</span>
+                <strong>Business Data</strong>
+                <small>Understand your numbers</small>
+            </div>
+
+        </div>
+
+
+        <div class="page-card">
 
             <h3>
-                Discover
+                Build your business step by step.
             </h3>
 
             <p>
-                Find your next opportunity.
+                ARIA will eventually connect your
+                products, customers, suppliers,
+                sales, expenses and business intelligence
+                in one workspace.
             </p>
 
         </div>
 
-    </div>
+    </section>
 
 
 
-    <div class="feature-grid">
+    <!-- PROFILE -->
 
+    <section id="profileScreen" class="screen">
 
-        <button
-            class="feature-card"
-            data-feature="opportunities"
-            type="button"
-        >
+        <div class="page-header">
 
-            <span class="feature-icon">
-                💡
-            </span>
+            <button
+                class="back-button"
+                data-back="home"
+                type="button"
+            >
+                ←
+            </button>
 
-            <strong>
-                Opportunities
-            </strong>
-
-            <small>
-                Find possibilities
-            </small>
-
-        </button>
-
-
-
-        <button
-            class="feature-card"
-            data-feature="buyers"
-            type="button"
-        >
-
-            <span class="feature-icon">
-                🛒
-            </span>
-
-            <strong>
-                Find Buyers
-            </strong>
-
-            <small>
-                Find potential markets
-            </small>
-
-        </button>
-
-
-
-        <button
-            class="feature-card"
-            data-feature="partners"
-            type="button"
-        >
-
-            <span class="feature-icon">
-                🤝
-            </span>
-
-            <strong>
-                Find Partners
-            </strong>
-
-            <small>
-                Connect with people
-            </small>
-
-        </button>
-
-
-
-        <button
-            class="feature-card"
-            data-feature="global"
-            type="button"
-        >
-
-            <span class="feature-icon">
-                🌎
-            </span>
-
-            <strong>
-                Global Market
-            </strong>
-
-            <small>
-                Explore worldwide
-            </small>
-
-        </button>
-
-
-    </div>
-
-</section>
-
-
-
-<!-- =====================================
-     MY BUSINESS
-====================================== -->
-
-<section class="business-preview">
-
-
-    <div class="business-header">
-
-        <div>
-
-            <span class="label">
-                MY BUSINESS
-            </span>
-
-            <h3>
-                Build from what you have.
-            </h3>
+            <div>
+                <span class="eyebrow">YOUR ARIA PROFILE</span>
+                <h2>Profile</h2>
+            </div>
 
         </div>
 
 
-        <span class="business-icon">
-            🏢
-        </span>
+        <div class="profile-card">
 
-    </div>
+            <div class="profile-avatar">
+                A
+            </div>
 
+            <h2>
+                Your Opportunity Profile
+            </h2>
 
-
-    <div class="business-items">
-
-
-        <div>
-
-            <strong>
-                Resources
-            </strong>
-
-            <span>
-                What you have
-            </span>
+            <p>
+                Your skills, resources, interests,
+                location and business goals can
+                eventually help ARIA personalise
+                opportunities for you.
+            </p>
 
         </div>
 
+    </section>
 
-        <div>
-
-            <strong>
-                Skills
-            </strong>
-
-            <span>
-                What you can do
-            </span>
-
-        </div>
+</main>
 
 
-        <div>
 
-            <strong>
-                Opportunities
-            </strong>
+<!-- BOTTOM NAVIGATION -->
 
-            <span>
-                What you can build
-            </span>
-
-        </div>
-
-
-    </div>
-
-
+<nav class="bottom-nav">
 
     <button
-        class="business-button"
-        id="businessButton"
+        class="nav-item active"
+        data-nav="home"
         type="button"
     >
-        Open My Business →
+        <span>⌂</span>
+        <small>Home</small>
     </button>
 
 
-</section>
+    <button
+        class="nav-item"
+        data-nav="opportunities"
+        type="button"
+    >
+        <span>💡</span>
+        <small>Explore</small>
+    </button>
 
 
-
-<!-- =====================================
-     OPPORTUNITY RADAR
-====================================== -->
-
-<section class="radar">
-
-
-    <div class="radar-icon">
-        🔎
-    </div>
-
-
-    <div>
-
-        <span class="label">
-            ARIA OPPORTUNITY RADAR
-        </span>
-
-
-        <h3>
-            Opportunities will appear here.
-        </h3>
-
-
-        <p>
-            As ARIA learns about your skills,
-            resources and interests, it can help
-            identify relevant opportunities.
-        </p>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================
-     CORE QUESTIONS
-====================================== -->
-
-<section class="questions">
-
-
-    <h3>
-        Start with what you already have.
-    </h3>
-
-
-    <div class="question-list">
-
-
-        <div>
-            WHAT DO YOU HAVE?
-        </div>
-
-
-        <div>
-            WHAT CAN YOU DO?
-        </div>
-
-
-        <div>
-            WHAT IS IT WORTH?
-        </div>
-
-
-        <div>
-            WHO NEEDS IT?
-        </div>
-
-
-        <div>
-            WHERE CAN YOU SELL IT?
-        </div>
-
-
-        <div>
-            WHO CAN HELP YOU?
-        </div>
-
-
-    </div>
-
-
-</section>
-
-</main><!-- =========================================
-     BOTTOM NAVIGATION
-========================================= --><nav class="bottom-nav"><button
-    class="nav-item active"
-    type="button"
-    data-nav="home"
->
-
-    <span>
-        ⌂
-    </span>
-
-    <small>
-        Home
-    </small>
-
-</button>
-
-
-
-<button
-    class="nav-item"
-    type="button"
-    data-nav="opportunities"
->
-
-    <span>
-        💡
-    </span>
-
-    <small>
-        Explore
-    </small>
-
-</button>
-
-
-
-<button
-    class="nav-scan"
-    id="bottomScan"
-    type="button"
-    aria-label="Scan with ARIA"
->
-
-    <span>
+    <button
+        class="nav-scan"
+        id="bottomScan"
+        type="button"
+        aria-label="Scan with ARIA"
+    >
         +
-    </span>
-
-</button>
-
-
-
-<button
-    class="nav-item"
-    type="button"
-    data-nav="business"
->
-
-    <span>
-        🏢
-    </span>
-
-    <small>
-        Business
-    </small>
-
-</button>
-
-
-
-<button
-    class="nav-item"
-    type="button"
-    data-nav="profile"
->
-
-    <span>
-        👤
-    </span>
-
-    <small>
-        Profile
-    </small>
-
-</button>
-
-</nav><!-- =========================================
-     MESSAGE MODAL
-========================================= --><div
-    class="modal hidden"
-    id="messageModal"
-    aria-hidden="true"
-><div
-    class="modal-box"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modalTitle"
->
-
-
-    <button
-        class="close-modal"
-        id="closeModal"
-        type="button"
-        aria-label="Close"
-    >
-        ×
     </button>
 
 
-    <div
-        class="modal-icon"
-        id="modalIcon"
-    >
-        💡
-    </div>
-
-
-    <h3 id="modalTitle">
-        ARIA
-    </h3>
-
-
-    <p id="modalMessage">
-        ARIA is ready to help.
-    </p>
-
-
     <button
-        class="modal-button"
-        id="modalAction"
+        class="nav-item"
+        data-nav="business"
         type="button"
     >
-        Continue
+        <span>🏢</span>
+        <small>Business</small>
     </button>
 
 
-</div>
+    <button
+        class="nav-item"
+        data-nav="profile"
+        type="button"
+    >
+        <span>👤</span>
+        <small>Profile</small>
+    </button>
 
-</div><!-- =========================================
-     JAVASCRIPT
-========================================= --><script src="script.js"></script></body></html>
+</nav>
+
+
+
+<!-- HIDDEN FILE INPUT -->
+
+<input
+    id="hiddenCameraInput"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    hidden
+>
+
+
+
+<!-- JAVASCRIPT -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
