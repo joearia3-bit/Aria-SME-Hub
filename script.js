@@ -1,88 +1,535 @@
-/* =========================================
+/* =========================================================
    ARIA SME HUB
-   MAIN JAVASCRIPT
-   BUILD 1 — INTERACTION FOUNDATION
-========================================= */
+   MAIN APPLICATION JAVASCRIPT
+   ========================================================= */
+
+"use strict";
 
 
-/* =========================================
-   GET ELEMENTS
-========================================= */
+/* =========================================================
+   SCREEN MANAGEMENT
+   ========================================================= */
 
-const scanButton = document.getElementById("scanButton");
-const talkButton = document.getElementById("talkButton");
-const bottomScan = document.getElementById("bottomScan");
-
-const businessButton = document.getElementById("businessButton");
-
-const messageModal = document.getElementById("messageModal");
-const closeModal = document.getElementById("closeModal");
-
-const modalIcon = document.getElementById("modalIcon");
-const modalTitle = document.getElementById("modalTitle");
-const modalMessage = document.getElementById("modalMessage");
-const modalAction = document.getElementById("modalAction");
-
-const menuButton = document.getElementById("menuButton");
+const screens = document.querySelectorAll(".screen");
+const navItems = document.querySelectorAll(".nav-item");
 
 
-/* =========================================
-   ARIA MODAL
-========================================= */
+function showScreen(screenName) {
 
-function showMessage(
-    icon,
-    title,
-    message,
-    actionText = "Continue"
-) {
+    screens.forEach(function (screen) {
+        screen.classList.remove("active");
+    });
 
-    if (!messageModal) {
-        return;
+    const target = document.getElementById(
+        screenName + "Screen"
+    );
+
+    if (target) {
+        target.classList.add("active");
     }
 
-    if (modalIcon) {
-        modalIcon.textContent = icon;
-    }
+    navItems.forEach(function (item) {
+        item.classList.remove("active");
 
-    if (modalTitle) {
-        modalTitle.textContent = title;
-    }
+        if (item.dataset.nav === screenName) {
+            item.classList.add("active");
+        }
+    });
 
-    if (modalMessage) {
-        modalMessage.textContent = message;
-    }
-
-    if (modalAction) {
-        modalAction.textContent = actionText;
-    }
-
-    messageModal.classList.remove("hidden");
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 
-function hideMessage() {
 
-    if (!messageModal) {
-        return;
-    }
+/* =========================================================
+   HOME
+   ========================================================= */
 
-    messageModal.classList.add("hidden");
+const homeButton = document.getElementById("homeButton");
+
+if (homeButton) {
+
+    homeButton.addEventListener("click", function () {
+        showScreen("home");
+    });
+
 }
 
 
-/* =========================================
+
+/* =========================================================
+   BOTTOM NAVIGATION
+   ========================================================= */
+
+navItems.forEach(function (item) {
+
+    item.addEventListener("click", function () {
+
+        const destination = item.dataset.nav;
+
+        if (!destination) {
+            return;
+        }
+
+        showScreen(destination);
+
+    });
+
+});
+
+
+
+/* =========================================================
+   BACK BUTTONS
+   ========================================================= */
+
+const backButtons =
+    document.querySelectorAll(".back-button");
+
+
+backButtons.forEach(function (button) {
+
+    button.addEventListener("click", function () {
+
+        const destination =
+            button.dataset.back || "home";
+
+        showScreen(destination);
+
+    });
+
+});
+
+
+
+/* =========================================================
+   TALK TO ARIA
+   ========================================================= */
+
+const talkButton =
+    document.getElementById("talkButton");
+
+
+if (talkButton) {
+
+    talkButton.addEventListener("click", function () {
+
+        showScreen("chat");
+
+        setTimeout(function () {
+
+            const input =
+                document.getElementById("chatInput");
+
+            if (input) {
+                input.focus();
+            }
+
+        }, 300);
+
+    });
+
+}
+
+
+
+/* =========================================================
+   CHAT
+   ========================================================= */
+
+const chatForm =
+    document.getElementById("chatForm");
+
+const chatInput =
+    document.getElementById("chatInput");
+
+const chatMessages =
+    document.getElementById("chatMessages");
+
+
+function addMessage(text, type) {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message " +
+        (type === "user"
+            ? "user-message"
+            : "aria-message");
+
+
+    const avatar =
+        document.createElement("div");
+
+    avatar.className =
+        "message-avatar";
+
+    avatar.textContent =
+        type === "user" ? "U" : "A";
+
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "message-content";
+
+
+    const name =
+        document.createElement("strong");
+
+    name.textContent =
+        type === "user" ? "YOU" : "ARIA";
+
+
+    const paragraph =
+        document.createElement("p");
+
+    paragraph.textContent = text;
+
+
+    content.appendChild(name);
+    content.appendChild(paragraph);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(content);
+
+    chatMessages.appendChild(wrapper);
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+
+function addTypingMessage() {
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "message aria-message typing-message";
+
+    wrapper.id =
+        "typingMessage";
+
+
+    const avatar =
+        document.createElement("div");
+
+    avatar.className =
+        "message-avatar";
+
+    avatar.textContent = "A";
+
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "message-content";
+
+
+    const name =
+        document.createElement("strong");
+
+    name.textContent = "ARIA";
+
+
+    const paragraph =
+        document.createElement("p");
+
+    paragraph.textContent =
+        "ARIA is thinking...";
+
+
+    content.appendChild(name);
+    content.appendChild(paragraph);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(content);
+
+    chatMessages.appendChild(wrapper);
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+
+function removeTypingMessage() {
+
+    const typing =
+        document.getElementById("typingMessage");
+
+    if (typing) {
+        typing.remove();
+    }
+
+}
+
+
+
+/* =========================================================
+   AI REQUEST
+   ========================================================= */
+
+async function askARIA(message) {
+
+    addTypingMessage();
+
+
+    try {
+
+        const response =
+            await fetch("/api/chat", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: message
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        removeTypingMessage();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "ARIA could not process the request."
+            );
+
+        }
+
+
+        if (data.reply) {
+
+            addMessage(
+                data.reply,
+                "aria"
+            );
+
+        } else {
+
+            addMessage(
+                "ARIA did not return a response.",
+                "aria"
+            );
+
+        }
+
+
+    } catch (error) {
+
+        removeTypingMessage();
+
+
+        addMessage(
+            "ARIA AI is not connected to the server yet. The interface is ready, but the AI server still needs to be connected.",
+            "aria"
+        );
+
+        console.error(
+            "ARIA AI error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CHAT FORM
+   ========================================================= */
+
+if (chatForm) {
+
+    chatForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const message =
+                chatInput.value.trim();
+
+
+            if (!message) {
+                return;
+            }
+
+
+            addMessage(
+                message,
+                "user"
+            );
+
+
+            chatInput.value = "";
+
+            chatInput.style.height =
+                "auto";
+
+
+            await askARIA(message);
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   AUTO RESIZE CHAT BOX
+   ========================================================= */
+
+if (chatInput) {
+
+    chatInput.addEventListener(
+        "input",
+        function () {
+
+            this.style.height = "auto";
+
+            this.style.height =
+                Math.min(
+                    this.scrollHeight,
+                    140
+                ) + "px";
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   VOICE INPUT
+   ========================================================= */
+
+const voiceButton =
+    document.getElementById("voiceButton");
+
+
+if (voiceButton) {
+
+    voiceButton.addEventListener(
+        "click",
+        function () {
+
+            const SpeechRecognition =
+                window.SpeechRecognition ||
+                window.webkitSpeechRecognition;
+
+
+            if (!SpeechRecognition) {
+
+                addMessage(
+                    "Voice input is not supported by this browser. You can type your message instead.",
+                    "aria"
+                );
+
+                return;
+            }
+
+
+            const recognition =
+                new SpeechRecognition();
+
+
+            recognition.lang = "en-US";
+
+            recognition.interimResults = false;
+
+            recognition.continuous = false;
+
+
+            voiceButton.classList.add(
+                "recording"
+            );
+
+
+            recognition.start();
+
+
+            recognition.onresult =
+                function (event) {
+
+                    const spokenText =
+                        event.results[0][0].transcript;
+
+                    chatInput.value =
+                        spokenText;
+
+                    chatInput.focus();
+
+                };
+
+
+            recognition.onerror =
+                function (event) {
+
+                    console.error(
+                        "Voice error:",
+                        event.error
+                    );
+
+                };
+
+
+            recognition.onend =
+                function () {
+
+                    voiceButton.classList.remove(
+                        "recording"
+                    );
+
+                };
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
    SCAN WITH ARIA
-========================================= */
+   ========================================================= */
+
+const scanButton =
+    document.getElementById("scanButton");
+
+const bottomScan =
+    document.getElementById("bottomScan");
+
 
 function openScanner() {
 
-    showMessage(
-        "📷",
-        "SCAN WITH ARIA",
-        "Camera and AI Vision will be connected here. You will be able to show ARIA a product, resource, document or object and ask what you can do with it.",
-        "Got it"
-    );
+    showScreen("scanner");
 
 }
 
@@ -107,21 +554,121 @@ if (bottomScan) {
 }
 
 
-/* =========================================
-   TALK TO ARIA
-========================================= */
 
-if (talkButton) {
+/* =========================================================
+   CAMERA / IMAGE SELECTION
+   ========================================================= */
 
-    talkButton.addEventListener(
+const cameraButton =
+    document.getElementById("cameraButton");
+
+const imageButton =
+    document.getElementById("imageButton");
+
+const imageInput =
+    document.getElementById("imageInput");
+
+const hiddenCameraInput =
+    document.getElementById(
+        "hiddenCameraInput"
+    );
+
+
+if (cameraButton) {
+
+    cameraButton.addEventListener(
         "click",
         function () {
 
-            showMessage(
-                "🎤",
-                "TALK TO ARIA",
-                "Voice and text conversation with ARIA will be connected here. ARIA will understand your request and respond in English.",
-                "Continue"
+            hiddenCameraInput.click();
+
+        }
+    );
+
+}
+
+
+if (imageButton) {
+
+    imageButton.addEventListener(
+        "click",
+        function () {
+
+            imageInput.click();
+
+        }
+    );
+
+}
+
+
+
+function processImage(file) {
+
+    if (!file) {
+        return;
+    }
+
+
+    if (!file.type.startsWith("image/")) {
+
+        alert(
+            "Please select an image."
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function (event) {
+
+            const preview =
+                document.getElementById(
+                    "scanPreview"
+                );
+
+            const result =
+                document.getElementById(
+                    "scanResult"
+                );
+
+
+            preview.src =
+                event.target.result;
+
+
+            result.classList.remove(
+                "hidden"
+            );
+
+
+            result.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+
+if (imageInput) {
+
+    imageInput.addEventListener(
+        "change",
+        function () {
+
+            processImage(
+                this.files[0]
             );
 
         }
@@ -130,12 +677,70 @@ if (talkButton) {
 }
 
 
-/* =========================================
-   FEATURE CARDS
-========================================= */
+if (hiddenCameraInput) {
+
+    hiddenCameraInput.addEventListener(
+        "change",
+        function () {
+
+            processImage(
+                this.files[0]
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   SCAN QUESTIONS
+   ========================================================= */
+
+const scanQuestions =
+    document.querySelectorAll(
+        ".scan-question"
+    );
+
+
+scanQuestions.forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            const question =
+                button.dataset.question;
+
+
+            showScreen("chat");
+
+
+            setTimeout(function () {
+
+                chatInput.value =
+                    question;
+
+                chatInput.focus();
+
+            }, 300);
+
+        }
+    );
+
+});
+
+
+
+/* =========================================================
+   FEATURE SCREENS
+   ========================================================= */
 
 const featureCards =
-    document.querySelectorAll(".feature-card");
+    document.querySelectorAll(
+        ".feature-card"
+    );
 
 
 featureCards.forEach(function (card) {
@@ -147,7 +752,12 @@ featureCards.forEach(function (card) {
             const feature =
                 card.dataset.feature;
 
-            openFeature(feature);
+
+            if (feature) {
+
+                showScreen(feature);
+
+            }
 
         }
     );
@@ -155,79 +765,16 @@ featureCards.forEach(function (card) {
 });
 
 
-function openFeature(feature) {
 
-    const features = {
+/* =========================================================
+   MY BUSINESS
+   ========================================================= */
 
-        opportunities: {
-
-            icon: "💡",
-
-            title: "OPPORTUNITIES",
-
-            message:
-                "ARIA will discover opportunities based on your resources, skills, location, interests and available capital."
-
-        },
-
-        buyers: {
-
-            icon: "🛒",
-
-            title: "FIND BUYERS",
-
-            message:
-                "ARIA will help research potential local, PNG and international buyer leads for products and services."
-
-        },
-
-        partners: {
-
-            icon: "🤝",
-
-            title: "FIND PARTNERS",
-
-            message:
-                "ARIA will match complementary resources, skills, businesses and people who may be able to work together."
-
-        },
-
-        global: {
-
-            icon: "🌎",
-
-            title: "GLOBAL MARKET",
-
-            message:
-                "ARIA will research potential international markets, buyer categories, market information and export considerations."
-
-        }
-
-    };
-
-
-    const selected =
-        features[feature];
-
-
-    if (!selected) {
-        return;
-    }
-
-
-    showMessage(
-        selected.icon,
-        selected.title,
-        selected.message,
-        "Continue"
+const businessButton =
+    document.getElementById(
+        "businessButton"
     );
 
-}
-
-
-/* =========================================
-   MY BUSINESS
-========================================= */
 
 if (businessButton) {
 
@@ -235,12 +782,7 @@ if (businessButton) {
         "click",
         function () {
 
-            showMessage(
-                "🏢",
-                "MY BUSINESS",
-                "Your future ARIA business workspace will connect products, inventory, customers, suppliers, sales, expenses and business intelligence.",
-                "Continue"
-            );
+            showScreen("business");
 
         }
     );
@@ -248,63 +790,38 @@ if (businessButton) {
 }
 
 
-/* =========================================
-   BOTTOM NAVIGATION
-========================================= */
 
-const navItems =
-    document.querySelectorAll(".nav-item");
+/* =========================================================
+   BUTTONS THAT OPEN CHAT WITH A QUESTION
+   ========================================================= */
+
+const chatOpenButtons =
+    document.querySelectorAll(
+        "[data-open-chat]"
+    );
 
 
-navItems.forEach(function (item) {
+chatOpenButtons.forEach(function (button) {
 
-    item.addEventListener(
+    button.addEventListener(
         "click",
         function () {
 
-            const navigation =
-                item.dataset.nav;
+            const question =
+                button.dataset.openChat;
 
 
-            if (!navigation) {
-                return;
-            }
+            showScreen("chat");
 
 
-            if (navigation === "opportunities") {
+            setTimeout(function () {
 
-                showMessage(
-                    "💡",
-                    "EXPLORE",
-                    "Your personalised opportunity feed will appear here.",
-                    "Continue"
-                );
+                chatInput.value =
+                    question;
 
-            }
+                chatInput.focus();
 
-
-            if (navigation === "business") {
-
-                showMessage(
-                    "🏢",
-                    "BUSINESS",
-                    "Your complete SME workspace will appear here.",
-                    "Continue"
-                );
-
-            }
-
-
-            if (navigation === "profile") {
-
-                showMessage(
-                    "👤",
-                    "PROFILE",
-                    "Your skills, resources, interests, location and preferences will be stored here.",
-                    "Continue"
-                );
-
-            }
+            }, 300);
 
         }
     );
@@ -312,9 +829,16 @@ navItems.forEach(function (item) {
 });
 
 
-/* =========================================
-   MENU BUTTON
-========================================= */
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+const menuButton =
+    document.getElementById(
+        "menuButton"
+    );
+
 
 if (menuButton) {
 
@@ -322,12 +846,7 @@ if (menuButton) {
         "click",
         function () {
 
-            showMessage(
-                "☰",
-                "ARIA MENU",
-                "Account settings, help, notifications, safety and other ARIA SME HUB tools will appear here.",
-                "Continue"
-            );
+            showScreen("profile");
 
         }
     );
@@ -335,55 +854,10 @@ if (menuButton) {
 }
 
 
-/* =========================================
-   CLOSE MODAL
-========================================= */
 
-if (closeModal) {
-
-    closeModal.addEventListener(
-        "click",
-        hideMessage
-    );
-
-}
-
-
-if (modalAction) {
-
-    modalAction.addEventListener(
-        "click",
-        hideMessage
-    );
-
-}
-
-
-/* =========================================
-   CLOSE WHEN CLICKING OUTSIDE
-========================================= */
-
-if (messageModal) {
-
-    messageModal.addEventListener(
-        "click",
-        function (event) {
-
-            if (event.target === messageModal) {
-
-                hideMessage();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================
-   ESCAPE KEY
-========================================= */
+/* =========================================================
+   KEYBOARD ESCAPE
+   ========================================================= */
 
 document.addEventListener(
     "keydown",
@@ -391,7 +865,7 @@ document.addEventListener(
 
         if (event.key === "Escape") {
 
-            hideMessage();
+            showScreen("home");
 
         }
 
@@ -399,21 +873,11 @@ document.addEventListener(
 );
 
 
-/* =========================================
-   ARIA STARTUP
-========================================= */
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
 
 console.log(
-    "ARIA SME HUB loaded successfully."
+    "ARIA SME HUB loaded."
 );
-
-console.log(
-    "Advanced AI, camera, voice, database and opportunity systems will connect through the backend."
-);
-
-
-/* =========================================
-   JAVASCRIPT CONNECTION TEST
-========================================= */
-
-alert("ARIA JavaScript is connected.");
