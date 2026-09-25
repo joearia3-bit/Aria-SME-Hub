@@ -612,54 +612,39 @@ function processImage(file) {
 
     if (!file.type.startsWith("image/")) {
 
-        alert(
-            "Please select an image."
-        );
+if (imageButton && imageInput) {
+    imageButton.addEventListener("click", function (event) {
+        event.preventDefault();
 
-        return;
+        imageInput.value = "";
+        imageInput.click();
+    });
 
-    }
+    imageInput.addEventListener("change", function () {
+        if (!imageInput.files || imageInput.files.length === 0) {
+            return;
+        }
 
+        const file = imageInput.files[0];
 
-    const reader =
-        new FileReader();
+        if (!file.type.startsWith("image/")) {
+            alert("Please choose an image file.");
+            imageInput.value = "";
+            return;
+        }
 
+        const reader = new FileReader();
 
-    reader.onload =
-        function (event) {
-
-            const preview =
-                document.getElementById(
-                    "scanPreview"
-                );
-
-            const result =
-                document.getElementById(
-                    "scanResult"
-                );
-
-
-            preview.src =
-                event.target.result;
-
-
-            result.classList.remove(
-                "hidden"
-            );
-
-
-            result.scrollIntoView({
-                behavior: "smooth"
-            });
-
+        reader.onload = function (event) {
+            if (scanPreview) {
+                scanPreview.src = event.target.result;
+                scanPreview.style.display = "block";
+            }
         };
 
-
-    reader.readAsDataURL(file);
-
+        reader.readAsDataURL(file);
+    });
 }
-
-
 
 if (imageInput) {
 
