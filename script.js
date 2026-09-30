@@ -569,17 +569,60 @@ const imageInput =
     document.getElementById("imageInput");
 
 const hiddenCameraInput =
-    document.getElementById(
-        "hiddenCameraInput"
-    );
+    document.getElementById("hiddenCameraInput");
+
+const scanPreview =
+    document.getElementById("scanPreview");
+
+const scanResult =
+    document.getElementById("scanResult");
 
 
-if (cameraButton) {
+/* ---------------------------------------------------------
+   PROCESS SELECTED IMAGE
+   --------------------------------------------------------- */
+
+function processImage(file) {
+
+    if (!file) {
+        return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+        alert("Please choose an image file.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+
+        if (scanPreview) {
+            scanPreview.src = event.target.result;
+            scanPreview.style.display = "block";
+        }
+
+        if (scanResult) {
+            scanResult.classList.remove("hidden");
+        }
+
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+/* ---------------------------------------------------------
+   TAKE PHOTO
+   --------------------------------------------------------- */
+
+if (cameraButton && hiddenCameraInput) {
 
     cameraButton.addEventListener(
         "click",
         function () {
 
+            hiddenCameraInput.value = "";
             hiddenCameraInput.click();
 
         }
@@ -588,12 +631,17 @@ if (cameraButton) {
 }
 
 
-if (imageButton) {
+/* ---------------------------------------------------------
+   CHOOSE IMAGE
+   --------------------------------------------------------- */
+
+if (imageButton && imageInput) {
 
     imageButton.addEventListener(
         "click",
         function () {
 
+            imageInput.value = "";
             imageInput.click();
 
         }
@@ -602,49 +650,9 @@ if (imageButton) {
 }
 
 
-
-function processImage(file) {
-
-    if (!file) {
-        return;
-    }
-
-
-    if (!file.type.startsWith("image/")) {
-
-if (imageButton && imageInput) {
-    imageButton.addEventListener("click", function (event) {
-        event.preventDefault();
-
-        imageInput.value = "";
-        imageInput.click();
-    });
-
-    imageInput.addEventListener("change", function () {
-        if (!imageInput.files || imageInput.files.length === 0) {
-            return;
-        }
-
-        const file = imageInput.files[0];
-
-        if (!file.type.startsWith("image/")) {
-            alert("Please choose an image file.");
-            imageInput.value = "";
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function (event) {
-            if (scanPreview) {
-                scanPreview.src = event.target.result;
-                scanPreview.style.display = "block";
-            }
-        };
-
-        reader.readAsDataURL(file);
-    });
-}
+/* ---------------------------------------------------------
+   IMAGE FROM GALLERY / FILE PICKER
+   --------------------------------------------------------- */
 
 if (imageInput) {
 
@@ -662,6 +670,10 @@ if (imageInput) {
 }
 
 
+/* ---------------------------------------------------------
+   PHOTO FROM CAMERA
+   --------------------------------------------------------- */
+
 if (hiddenCameraInput) {
 
     hiddenCameraInput.addEventListener(
@@ -676,7 +688,6 @@ if (hiddenCameraInput) {
     );
 
 }
-
 
 
 /* =========================================================
