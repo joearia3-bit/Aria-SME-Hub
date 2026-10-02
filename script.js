@@ -1,879 +1,342 @@
-/* =========================================================
-   ARIA SME HUB
-   MAIN APPLICATION JAVASCRIPT
-   ========================================================= */
-
 "use strict";
 
+/* =========================================
+   ARIA SME HUB
+   MAIN APPLICATION JAVASCRIPT
+========================================= */
 
-/* =========================================================
-   SCREEN MANAGEMENT
-   ========================================================= */
+const BACKEND_URL =
+  "https://script.google.com/macros/s/AKfycbyITnFHfh9oB4EMGbesmcrZEr1aBuRt6Fv9iC8tAT1Sgx04gZc1_O8JfCEOOrYy0F_RrQ/exec";
 
 const screens = document.querySelectorAll(".screen");
-const navItems = document.querySelectorAll(".nav-item");
+const navLinks = document.querySelectorAll(".nav-link");
+const goButtons = document.querySelectorAll("[data-go]");
+
+const menuButton = document.getElementById("menuButton");
+const mainNav = document.getElementById("mainNav");
+
+const cameraInput = document.getElementById("cameraInput");
+const imageInput = document.getElementById("imageInput");
+const previewImage = document.getElementById("previewImage");
+const scanPreview = document.getElementById("scanPreview");
+const analyzeButton = document.getElementById("analyzeButton");
+const scanStatus = document.getElementById("scanStatus");
+const scanResults = document.getElementById("scanResults");
+const analysisOutput = document.getElementById("analysisOutput");
+
+const chatForm = document.getElementById("chatForm");
+const chatInput = document.getElementById("chatInput");
+const chatMessages = document.getElementById("chatMessages");
+const chatStatus = document.getElementById("chatStatus");
 
 
-function showScreen(screenName) {
+/* =========================================
+   SCREEN MANAGEMENT
+========================================= */
 
-    screens.forEach(function (screen) {
-        screen.classList.remove("active");
-    });
+function showScreen(screenId) {
+  const target = document.getElementById(screenId);
 
-    const target = document.getElementById(
-        screenName + "Screen"
+  if (!target || !target.classList.contains("screen")) {
+    return;
+  }
+
+  screens.forEach((screen) => {
+    screen.classList.toggle(
+      "active",
+      screen.id === screenId
     );
+  });
 
-    if (target) {
-        target.classList.add("active");
+  navLinks.forEach((link) => {
+    const isActive =
+      link.dataset.screen === screenId;
+
+    link.classList.toggle("active", isActive);
+
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
     }
+  });
 
-    navItems.forEach(function (item) {
-        item.classList.remove("active");
+  if (mainNav) {
+    mainNav.classList.remove("menu-open");
+  }
 
-        if (item.dataset.nav === screenName) {
-            item.classList.add("active");
-        }
-    });
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 
-
-/* =========================================================
-   HOME
-   ========================================================= */
-
-const homeButton = document.getElementById("homeButton");
-
-if (homeButton) {
-
-    homeButton.addEventListener("click", function () {
-        showScreen("home");
-    });
-
-}
-
-
-
-/* =========================================================
-   BOTTOM NAVIGATION
-   ========================================================= */
-
-navItems.forEach(function (item) {
-
-    item.addEventListener("click", function () {
-
-        const destination = item.dataset.nav;
-
-        if (!destination) {
-            return;
-        }
-
-        showScreen(destination);
-
-    });
-
+navLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    showScreen(link.dataset.screen);
+  });
 });
 
 
-
-/* =========================================================
-   BACK BUTTONS
-   ========================================================= */
-
-const backButtons =
-    document.querySelectorAll(".back-button");
-
-
-backButtons.forEach(function (button) {
-
-    button.addEventListener("click", function () {
-
-        const destination =
-            button.dataset.back || "home";
-
-        showScreen(destination);
-
-    });
-
+goButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    showScreen(button.dataset.go);
+  });
 });
 
 
+/* =========================================
+   MOBILE MENU
+========================================= */
 
-/* =========================================================
-   TALK TO ARIA
-   ========================================================= */
+if (menuButton && mainNav) {
+  menuButton.addEventListener("click", () => {
+    const isOpen =
+      mainNav.classList.toggle("menu-open");
 
-const talkButton =
-    document.getElementById("talkButton");
-
-
-if (talkButton) {
-
-    talkButton.addEventListener("click", function () {
-
-        showScreen("chat");
-
-        setTimeout(function () {
-
-            const input =
-                document.getElementById("chatInput");
-
-            if (input) {
-                input.focus();
-            }
-
-        }, 300);
-
-    });
-
+    menuButton.setAttribute(
+      "aria-expanded",
+      String(isOpen)
+    );
+  });
 }
 
 
+/* =========================================
+   IMAGE SCANNER
+========================================= */
 
-/* =========================================================
-   CHAT
-   ========================================================= */
-
-const chatForm =
-    document.getElementById("chatForm");
-
-const chatInput =
-    document.getElementById("chatInput");
-
-const chatMessages =
-    document.getElementById("chatMessages");
+let selectedImage = null;
+let previewUrl = null;
 
 
-function addMessage(text, type) {
+function resetScanResults() {
+  if (scanResults) {
+    scanResults.hidden = true;
+  }
 
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "message " +
-        (type === "user"
-            ? "user-message"
-            : "aria-message");
-
-
-    const avatar =
-        document.createElement("div");
-
-    avatar.className =
-        "message-avatar";
-
-    avatar.textContent =
-        type === "user" ? "U" : "A";
-
-
-    const content =
-        document.createElement("div");
-
-    content.className =
-        "message-content";
-
-
-    const name =
-        document.createElement("strong");
-
-    name.textContent =
-        type === "user" ? "YOU" : "ARIA";
-
-
-    const paragraph =
-        document.createElement("p");
-
-    paragraph.textContent = text;
-
-
-    content.appendChild(name);
-    content.appendChild(paragraph);
-
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(content);
-
-    chatMessages.appendChild(wrapper);
-
-    chatMessages.scrollTop =
-        chatMessages.scrollHeight;
-
+  if (analysisOutput) {
+    analysisOutput.textContent = "";
+  }
 }
 
 
+function handleImageSelection(file) {
+  if (!file) {
+    return;
+  }
 
-function addTypingMessage() {
+  if (!file.type.startsWith("image/")) {
+    scanStatus.textContent =
+      "Please select a valid image.";
+    return;
+  }
 
-    const wrapper =
-        document.createElement("div");
+  if (file.size > 15 * 1024 * 1024) {
+    scanStatus.textContent =
+      "Image is too large. Choose an image under 15 MB.";
+    return;
+  }
 
-    wrapper.className =
-        "message aria-message typing-message";
+  selectedImage = file;
 
-    wrapper.id =
-        "typingMessage";
+  if (previewUrl) {
+    URL.revokeObjectURL(previewUrl);
+  }
 
+  previewUrl = URL.createObjectURL(file);
 
-    const avatar =
-        document.createElement("div");
+  previewImage.onload = () => {
+    previewImage.hidden = false;
 
-    avatar.className =
-        "message-avatar";
+    const placeholder =
+      scanPreview.querySelector(
+        ".preview-placeholder"
+      );
 
-    avatar.textContent = "A";
-
-
-    const content =
-        document.createElement("div");
-
-    content.className =
-        "message-content";
-
-
-    const name =
-        document.createElement("strong");
-
-    name.textContent = "ARIA";
-
-
-    const paragraph =
-        document.createElement("p");
-
-    paragraph.textContent =
-        "ARIA is thinking...";
-
-
-    content.appendChild(name);
-    content.appendChild(paragraph);
-
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(content);
-
-    chatMessages.appendChild(wrapper);
-
-    chatMessages.scrollTop =
-        chatMessages.scrollHeight;
-
-}
-
-
-
-function removeTypingMessage() {
-
-    const typing =
-        document.getElementById("typingMessage");
-
-    if (typing) {
-        typing.remove();
+    if (placeholder) {
+      placeholder.hidden = true;
     }
 
+    analyzeButton.disabled = false;
+
+    scanStatus.textContent =
+      "Image ready. AI identification is not connected yet.";
+  };
+
+  previewImage.onerror = () => {
+    selectedImage = null;
+
+    analyzeButton.disabled = true;
+
+    scanStatus.textContent =
+      "Unable to display this image. Try another file.";
+  };
+
+  previewImage.src = previewUrl;
+
+  resetScanResults();
 }
 
 
-
-/* =========================================================
-   AI REQUEST
-   ========================================================= */
-
-async function askARIA(message) {
-
-    addTypingMessage();
-
-
-    try {
-
-        const response =
-            await fetch("/api/chat", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    message: message
-                })
-
-            });
-
-
-        const data =
-            await response.json();
-
-
-        removeTypingMessage();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                "ARIA could not process the request."
-            );
-
-        }
-
-
-        if (data.reply) {
-
-            addMessage(
-                data.reply,
-                "aria"
-            );
-
-        } else {
-
-            addMessage(
-                "ARIA did not return a response.",
-                "aria"
-            );
-
-        }
-
-
-    } catch (error) {
-
-        removeTypingMessage();
-
-
-        addMessage(
-            "ARIA AI is not connected to the server yet. The interface is ready, but the AI server still needs to be connected.",
-            "aria"
-        );
-
-        console.error(
-            "ARIA AI error:",
-            error
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   CHAT FORM
-   ========================================================= */
-
-if (chatForm) {
-
-    chatForm.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            const message =
-                chatInput.value.trim();
-
-
-            if (!message) {
-                return;
-            }
-
-
-            addMessage(
-                message,
-                "user"
-            );
-
-
-            chatInput.value = "";
-
-            chatInput.style.height =
-                "auto";
-
-
-            await askARIA(message);
-
-        }
+if (cameraInput) {
+  cameraInput.addEventListener("change", () => {
+    handleImageSelection(
+      cameraInput.files[0]
     );
-
+  });
 }
 
-
-
-/* =========================================================
-   AUTO RESIZE CHAT BOX
-   ========================================================= */
-
-if (chatInput) {
-
-    chatInput.addEventListener(
-        "input",
-        function () {
-
-            this.style.height = "auto";
-
-            this.style.height =
-                Math.min(
-                    this.scrollHeight,
-                    140
-                ) + "px";
-
-        }
-    );
-
-}
-
-
-
-/* =========================================================
-   VOICE INPUT
-   ========================================================= */
-
-const voiceButton =
-    document.getElementById("voiceButton");
-
-
-if (voiceButton) {
-
-    voiceButton.addEventListener(
-        "click",
-        function () {
-
-            const SpeechRecognition =
-                window.SpeechRecognition ||
-                window.webkitSpeechRecognition;
-
-
-            if (!SpeechRecognition) {
-
-                addMessage(
-                    "Voice input is not supported by this browser. You can type your message instead.",
-                    "aria"
-                );
-
-                return;
-            }
-
-
-            const recognition =
-                new SpeechRecognition();
-
-
-            recognition.lang = "en-US";
-
-            recognition.interimResults = false;
-
-            recognition.continuous = false;
-
-
-            voiceButton.classList.add(
-                "recording"
-            );
-
-
-            recognition.start();
-
-
-            recognition.onresult =
-                function (event) {
-
-                    const spokenText =
-                        event.results[0][0].transcript;
-
-                    chatInput.value =
-                        spokenText;
-
-                    chatInput.focus();
-
-                };
-
-
-            recognition.onerror =
-                function (event) {
-
-                    console.error(
-                        "Voice error:",
-                        event.error
-                    );
-
-                };
-
-
-            recognition.onend =
-                function () {
-
-                    voiceButton.classList.remove(
-                        "recording"
-                    );
-
-                };
-
-        }
-    );
-
-}
-
-
-
-/* =========================================================
-   SCAN WITH ARIA
-   ========================================================= */
-
-const scanButton =
-    document.getElementById("scanButton");
-
-const bottomScan =
-    document.getElementById("bottomScan");
-
-
-function openScanner() {
-
-    showScreen("scanner");
-
-}
-
-
-if (scanButton) {
-
-    scanButton.addEventListener(
-        "click",
-        openScanner
-    );
-
-}
-
-
-if (bottomScan) {
-
-    bottomScan.addEventListener(
-        "click",
-        openScanner
-    );
-
-}
-
-
-
-/* =========================================================
-   CAMERA / IMAGE SELECTION
-   ========================================================= */
-
-const cameraButton =
-    document.getElementById("cameraButton");
-
-const imageButton =
-    document.getElementById("imageButton");
-
-const imageInput =
-    document.getElementById("imageInput");
-
-const hiddenCameraInput =
-    document.getElementById("hiddenCameraInput");
-
-const scanPreview =
-    document.getElementById("scanPreview");
-
-const scanResult =
-    document.getElementById("scanResult");
-
-
-/* ---------------------------------------------------------
-   PROCESS SELECTED IMAGE
-   --------------------------------------------------------- */
-
-function processImage(file) {
-
-    if (!file) {
-        return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-        alert("Please choose an image file.");
-        return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-
-        if (scanPreview) {
-            scanPreview.src = event.target.result;
-            scanPreview.style.display = "block";
-        }
-
-        if (scanResult) {
-            scanResult.classList.remove("hidden");
-        }
-
-    };
-
-    reader.readAsDataURL(file);
-}
-
-
-/* ---------------------------------------------------------
-   TAKE PHOTO
-   --------------------------------------------------------- */
-
-if (cameraButton && hiddenCameraInput) {
-
-    cameraButton.addEventListener(
-        "click",
-        function () {
-
-            hiddenCameraInput.value = "";
-            hiddenCameraInput.click();
-
-        }
-    );
-
-}
-
-
-/* ---------------------------------------------------------
-   CHOOSE IMAGE
-   --------------------------------------------------------- */
-
-if (imageButton && imageInput) {
-
-    imageButton.addEventListener(
-        "click",
-        function () {
-
-            imageInput.value = "";
-            imageInput.click();
-
-        }
-    );
-
-}
-
-
-/* ---------------------------------------------------------
-   IMAGE FROM GALLERY / FILE PICKER
-   --------------------------------------------------------- */
 
 if (imageInput) {
-
-    imageInput.addEventListener(
-        "change",
-        function () {
-
-            processImage(
-                this.files[0]
-            );
-
-        }
+  imageInput.addEventListener("change", () => {
+    handleImageSelection(
+      imageInput.files[0]
     );
-
+  });
 }
 
 
-/* ---------------------------------------------------------
-   PHOTO FROM CAMERA
-   --------------------------------------------------------- */
-
-if (hiddenCameraInput) {
-
-    hiddenCameraInput.addEventListener(
-        "change",
-        function () {
-
-            processImage(
-                this.files[0]
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SCAN QUESTIONS
-   ========================================================= */
-
-const scanQuestions =
-    document.querySelectorAll(
-        ".scan-question"
-    );
-
-
-scanQuestions.forEach(function (button) {
-
-    button.addEventListener(
-        "click",
-        function () {
-
-            const question =
-                button.dataset.question;
-
-
-            showScreen("chat");
-
-
-            setTimeout(function () {
-
-                chatInput.value =
-                    question;
-
-                chatInput.focus();
-
-            }, 300);
-
-        }
-    );
-
-});
-
-
-
-/* =========================================================
-   FEATURE SCREENS
-   ========================================================= */
-
-const featureCards =
-    document.querySelectorAll(
-        ".feature-card"
-    );
-
-
-featureCards.forEach(function (card) {
-
-    card.addEventListener(
-        "click",
-        function () {
-
-            const feature =
-                card.dataset.feature;
-
-
-            if (feature) {
-
-                showScreen(feature);
-
-            }
-
-        }
-    );
-
-});
-
-
-
-/* =========================================================
-   MY BUSINESS
-   ========================================================= */
-
-const businessButton =
-    document.getElementById(
-        "businessButton"
-    );
-
-
-if (businessButton) {
-
-    businessButton.addEventListener(
-        "click",
-        function () {
-
-            showScreen("business");
-
-        }
-    );
-
-}
-
-
-
-/* =========================================================
-   BUTTONS THAT OPEN CHAT WITH A QUESTION
-   ========================================================= */
-
-const chatOpenButtons =
-    document.querySelectorAll(
-        "[data-open-chat]"
-    );
-
-
-chatOpenButtons.forEach(function (button) {
-
-    button.addEventListener(
-        "click",
-        function () {
-
-            const question =
-                button.dataset.openChat;
-
-
-            showScreen("chat");
-
-
-            setTimeout(function () {
-
-                chatInput.value =
-                    question;
-
-                chatInput.focus();
-
-            }, 300);
-
-        }
-    );
-
-});
-
-
-
-/* =========================================================
-   MENU
-   ========================================================= */
-
-const menuButton =
-    document.getElementById(
-        "menuButton"
-    );
-
-
-if (menuButton) {
-
-    menuButton.addEventListener(
-        "click",
-        function () {
-
-            showScreen("profile");
-
-        }
-    );
-
-}
-
-
-
-/* =========================================================
-   KEYBOARD ESCAPE
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Escape") {
-
-            showScreen("home");
-
-        }
-
+if (analyzeButton) {
+  analyzeButton.addEventListener("click", () => {
+    if (!selectedImage) {
+      scanStatus.textContent =
+        "Please select an image first.";
+      return;
     }
-);
+
+    scanStatus.textContent =
+      "Your image is ready, but AI image recognition is not connected yet.";
+
+    scanResults.hidden = false;
+
+    analysisOutput.textContent =
+      "Your image has been loaded successfully. The next step is to connect Gemini so ARIA can identify the item and generate business opportunities.";
+  });
+}
 
 
+/* =========================================
+   CHAT
+========================================= */
 
-/* =========================================================
-   STARTUP
-   ========================================================= */
+function addChatMessage(message, sender) {
+  const bubble =
+    document.createElement("div");
+
+  bubble.className =
+    sender === "user"
+      ? "chat-bubble user-message"
+      : "chat-bubble assistant-message";
+
+  bubble.textContent = message;
+
+  chatMessages.appendChild(bubble);
+
+  chatMessages.scrollTop =
+    chatMessages.scrollHeight;
+}
+
+
+/* =========================================
+   TALK TO ARIA
+   CONNECT TO GOOGLE APPS SCRIPT
+========================================= */
+
+if (chatForm) {
+  chatForm.addEventListener(
+    "submit",
+    async (event) => {
+      event.preventDefault();
+
+      const message =
+        chatInput.value.trim();
+
+      if (!message) {
+        return;
+      }
+
+      addChatMessage(
+        message,
+        "user"
+      );
+
+      chatInput.value = "";
+
+      chatStatus.textContent =
+        "Connecting to Aria...";
+
+      try {
+        const response =
+          await fetch(
+            BACKEND_URL,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "text/plain;charset=utf-8"
+              },
+              body: JSON.stringify({
+                message: message
+              })
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            "Server returned " +
+            response.status
+          );
+        }
+
+        const data =
+          await response.json();
+
+        if (data.success) {
+          addChatMessage(
+            data.message,
+            "assistant"
+          );
+
+          chatStatus.textContent =
+            "Aria backend is connected.";
+        } else {
+          addChatMessage(
+            "Aria received your message, but returned an error.",
+            "assistant"
+          );
+
+          chatStatus.textContent =
+            data.message ||
+            "Backend error.";
+        }
+
+      } catch (error) {
+        console.error(
+          "ARIA backend error:",
+          error
+        );
+
+        addChatMessage(
+          "I could not connect to the ARIA AI service. Please check the connection.",
+          "assistant"
+        );
+
+        chatStatus.textContent =
+          "Connection failed. Please try again.";
+      }
+    }
+  );
+}
+
+
+/* =========================================
+   START APPLICATION
+========================================= */
+
+showScreen("home");
 
 console.log(
-    "ARIA SME HUB loaded."
+  "ARIA SME HUB JavaScript loaded successfully."
 );
